@@ -9,26 +9,32 @@ With version 3.0 we've simplified interaction with the Twilio REST API. No more 
 
 ## Installing
 
+Download the [source](https://github.com/twilio/twilio-php/zipball/master) which includes all dependencies. 
+
+Once you download the library, stick the folder in your project directory and then include the library file:
+
+    require 'Services/Twilio.php';
+
+and you're good to go! 
+
 ### Via PEAR (>= 1.9.3):
+
+Or use these PEAR commands to download the helper library:
 
     pear channel-discover twilio.github.com/pear
     pear install twilio/Services_Twilio
 
-### From Source
-
-Not using PEAR? Not a problem. Download the [source](https://github.com/twilio/twilio-php/zipball/master) which includes all dependencies.
-
 ## Quickstart
 
-Want to get up running with **twilio-php** in minutes? Read through the quickstart [here](http://readthedocs.org/docs/twilio-php/en/latest/#quickstart). Highly suggested reading.
+Want to get up and running with **twilio-php** in minutes? [Click here to read through our quickstart guide](http://readthedocs.org/docs/twilio-php/en/latest/#quickstart). 
 
 ## Full Documentation
 
-http://readthedocs.org/docs/twilio-php/en/latest/
+The documentation for **twilio-php** is hosted at Read the Docs. [Click here to read through our full documentation.](http://readthedocs.org/docs/twilio-php/en/latest/)
 
 ## Reporting Issues
 
-Report issues using the [Github Issue Tracker](https://github.com/twilio/twilio-php/issues) or email [help@twilio.com](mailto:help@twilio.com).
+Did you run into trouble using our documentation? We would love to hear your feedback. Report issues using the [Github Issue Tracker](https://github.com/twilio/twilio-php/issues) or email [help@twilio.com](mailto:help@twilio.com).
 
 ## Sample Code
 
@@ -44,18 +50,20 @@ $client = new Services_Twilio($sid, $token);
 $call = $client->account->calls->create(
     '9991231234', // From this number
     '8881231234', // Call this number
-    'http://foo.com/call.xml'
-);
+    // Read TwiML at this URL when a call connects (this will play hold music)
+    'http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient');
 ```
 
 ### Generating TwiML
 
-To control phone calls, your application need to output TwiML. Use `Services_Twilio_Twiml` to easily create such responses.
+To control phone calls, your application need to output [TwiML, our XML
+language to control calls](http://www.twilio.com/docs/api/twiml/ "TwiML
+Documentation"). Use `Services_Twilio_Twiml` to easily create such responses.
 
 ```php
 $response = new Services_Twilio_Twiml();
 $response->say('Hello');
-$response->play('monkey.mp3', array("loop" => 5));
+$response->play('https://api.twilio.com/cowbell.mp3', array("loop" => 5));
 print $response;
 ```
 
@@ -63,8 +71,6 @@ print $response;
 <?xml version="1.0" encoding="utf-8"?>
 <Response>
   <Say>Hello</Say>
-  <Play loop="5">monkey.mp3</Play>
+  <Play loop="5">https://api.twilio.com/cowbell.mp3</Play>
 </Response>
 ```
-
-

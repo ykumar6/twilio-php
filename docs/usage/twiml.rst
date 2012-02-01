@@ -59,14 +59,14 @@ Play
 .. code-block:: php
 
     $response = new Services_Twilio_Twiml;
-    $response->play("monkey.mp3", array('loop' => 5));
+    $response->play("https://api.twilio.com/cowbell.mp3", array('loop' => 5));
     print $response;
 
 .. code-block:: xml
 
     <?xml version="1.0" encoding="UTF-8"?>
     <Response>
-      <Play loop="5">monkey.mp3</Play>
+      <Play loop="5">https://api.twilio.com/cowbell.mp3</Play>
     <Response>
 
 Gather
@@ -123,7 +123,7 @@ Sms
 
     <?xml version="1.0" encoding="UTF-8"?>
     <Response>
-      <Dial to="+14150001111" from="+14152223333">Hello World</Dial>
+      <Sms to="+14150001111" from="+14152223333">Hello World</Sms>
     </Response>
 
 Dial
@@ -218,14 +218,14 @@ Redirect
 .. code-block:: php
 
     $response = new Services_Twilio_Twiml;
-    $response->redirect('http://foo.com/path/to/resource');
+    $response->redirect('http://twimlets.com/voicemail?Email=somebody@somedomain.com');
     print $response;
     
 .. code-block:: xml
 
     <?xml version="1.0" encoding="UTF-8"?>
     <Response>
-      <Redirect>http://foo.com/path/to/resource</Redirect>
+      <Redirect>http://twimlets.com/voicemail?Email=somebody@somedomain.com</Redirect>
     </Response>
 
 
@@ -265,8 +265,9 @@ Pause
     <Response>
       <Say>Hello</Say>
       <Pause />
-      <Say>Word</Say>
+      <Say>World</Say>
     </Response>
 
 
-The verb methods (outlined in the complete reference) take the body (only text) of the verb as the first argument. All attributes are keyword arguments.
+The verb methods (outlined in the complete reference) take the body (only text)
+of the verb as the first argument. All attributes are keyword arguments.

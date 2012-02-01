@@ -46,7 +46,10 @@ class Services_Twilio extends Services_Twilio_Resource
         if (null === $_http) {
             $_http = new Services_Twilio_TinyHttp(
                 "https://api.twilio.com",
-                array("curlopts" => array(CURLOPT_USERAGENT => self::USER_AGENT))
+                array("curlopts" => array(
+                    CURLOPT_USERAGENT => self::USER_AGENT,
+                    CURLOPT_CAINFO => dirname(__FILE__) . "/twilio_ssl_certificate.crt",
+                ))
             );
         }
         $_http->authenticate($sid, $token);
@@ -173,12 +176,8 @@ class Services_Twilio extends Services_Twilio_Resource
 
     private function _processXmlResponse($status, $headers, $body) {
         $decoded = simplexml_load_string($body);
-        $json_decoded = self::_convertToUnderscoreKeyNames($decoded);
-        if (isset($json_decoded->account)) {
-            $json_decoded = $json_decoded->account;
-        }
         if (200 <= $status && $status < 300) {
-            return $json_decoded;
+            return $decoded;
         }
         throw new Services_Twilio_RestException(
             (int)$decoded->Status,

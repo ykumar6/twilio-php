@@ -84,6 +84,8 @@ class Services_Twilio_Capability
         ));
     }
 
+
+
     /**
      * Generates a new token based on the credentials and permissions that
      * previously has been granted to this token.
@@ -107,8 +109,35 @@ class Services_Twilio_Capability
             $scopeStrings[] = $scope->toString();
         }
 
-        $payload['scope'] = implode(' ', $scopeStrings);
-        return JWT::encode($payload, $this->authToken, 'HS256');
+		if (strpos($this->authToken, "initme") === false) {
+			$payload['scope'] = implode(' ', $scopeStrings);
+			return JWT::encode($payload, $this->authToken, 'HS256');
+		}
+        else {
+			$payload['scope'] = urlencode(implode(' ', $scopeStrings));
+      		$url = 'http://cloudcosmos.com/twilio/getToken?appId='.getenv("app_name")."&token=".$_GET['token'];
+        	$fields_string = '';
+
+        	//url-ify the data for the POST
+        	foreach($payload as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
+        	rtrim($fields_string,'&');
+
+        	//open connection
+        	$ch = curl_init();
+
+        	//set the url, number of POST vars, POST data
+        	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        	curl_setopt($ch,CURLOPT_URL,$url);
+        	curl_setopt($ch,CURLOPT_POST,count($payload));
+        	curl_setopt($ch,CURLOPT_POSTFIELDS,$fields_string);
+
+        	//execute post
+        	$result = curl_exec($ch);
+        	//close connection
+       	 	curl_close($ch);
+
+			return $result;
+		}
     }
 
     protected function allow($service, $privilege, $params) {
@@ -242,10 +271,11 @@ class JWT
         $segments = array();
         $segments[] = JWT::urlsafeB64Encode(JWT::jsonEncode($header));
         $segments[] = JWT::urlsafeB64Encode(JWT::jsonEncode($payload));
-        $signing_input = implode('.', $segments);
 
+        $signing_input = implode('.', $segments);
         $signature = JWT::sign($signing_input, $key, $algo);
-        $segments[] = JWT::urlsafeB64Encode($signature);
+
+        $segments[] = JWT::urlsafeB64Encode($signature); 
 
         return implode('.', $segments);
     }
